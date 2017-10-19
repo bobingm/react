@@ -117,6 +117,8 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
+      current_x: [null],
+      current_y: [null],
     };
   }
 
@@ -127,6 +129,8 @@ class Game extends React.Component {
     // const current = history[history.length - 1];
     const current = history[this.state.stepNumber];
     const squares = current.squares.slice();
+    const current_x = this.state.current_x.slice(0, this.state.stepNumber + 1);;
+    const current_y = this.state.current_y.slice(0, this.state.stepNumber + 1);;
     // someone wins or square[i] is ocupied
     if (calculateWinner(squares) || squares[i]) {
       return;
@@ -138,6 +142,8 @@ class Game extends React.Component {
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
+      current_x: current_x.concat(Math.floor(i / 3) + 1), // plus 1 to start with 1
+      current_y: current_y.concat(i % 3 + 1)
     });
   }
 
@@ -154,6 +160,8 @@ class Game extends React.Component {
     // const current = history[history.length - 1];
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+    const currentx = this.state.current_x[this.state.stepNumber];
+    const currenty = this.state.current_y[this.state.stepNumber];
     const moves = history.map((step, move) => {
       const desc = move ?
         'Go to move #' + move :
@@ -171,6 +179,10 @@ class Game extends React.Component {
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
+    let position;
+    if (currentx && currenty) {
+      position = currentx + ' , ' + currenty
+    }
     return (
       <div className="game">
         <div className="game-board">
@@ -182,6 +194,10 @@ class Game extends React.Component {
         <div className="game-info">
           <div>{status}</div>
           <ol>{moves}</ol>
+        </div>
+        <div className="game-info">
+          <div>Current Position</div>
+          <ol>{position}</ol>
         </div>
       </div>
     );
